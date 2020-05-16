@@ -16,6 +16,8 @@
       Result = Solve();
     }
 
+    public Operation() { }
+
     public string Solve()
     {
       double res = 0;

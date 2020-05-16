@@ -18,9 +18,9 @@ namespace Act14_Paginacion
     public int GlobalTime { get; set; }
     private int totalProcesses { get; set; }
 
-    private Memory memory;
+    public Memory memory { get; set; }
 
-    private int quantum;
+    public int quantum { get; set; }
 
     public Queue<Process> New { get; set; }
     public Queue<Process> Ready { get; set; }
@@ -34,9 +34,12 @@ namespace Act14_Paginacion
     private bool wasBlocked;
 
     private MainWindow mW;
+    public int qCount;
 
     public Scheduler(MainWindow mW)
     {
+      memory = new Memory();
+
       New = new Queue<Process>();
       Ready = new Queue<Process>();
       Running = new Process();
@@ -53,6 +56,9 @@ namespace Act14_Paginacion
         Admit();
         Dispatch();
 
+        mW.UpdateMemory(this);
+        mW.UpdateLabels(Running);
+
         await ExecuteRunning().ConfigureAwait(true);
 
         if(!wasBlocked && Running.State == States.Running) {
@@ -60,21 +66,25 @@ namespace Act14_Paginacion
         }
         wasInterru = false;
         wasBlocked = false;
-
       }
-      //mW.UpdateLabels(new Process());
+      mW.UpdateLabels(new Process());
+      mW.UpdateMemory(this);
     }
 
     public void Admit()
     {
-      while(memory.InsertProcess(New.Peek())) {
+      while(New.Count > 0 && memory.FreeFrames > 0 && New.Peek().TotalPages < memory.FreeFrames) {
         Process p = New.Dequeue();
+
         p.tEsp = 0;
         p.tTra = 0;
         p.tLle = GlobalTime;
         p.State = States.Ready;
+
         Ready.Enqueue(p);
-        //mW.tblReady.Items.Add(p);
+        memory.InsertProcess(p, States.Ready);
+
+        mW.tblReady.Rows.Add(p.Id, p.TME, p.tRest);
       }
     }
 
@@ -84,54 +94,65 @@ namespace Act14_Paginacion
         Running = Ready.Dequeue();
         Running.State = States.Running;
 
-        //if(Running.tResp == -1)
-        //  Running.tResp = GlobalTime - Running.tLle;
+        memory.ChangeFramesState(Running, States.Running); // <<
 
-        //mW.tblReady.Items.Remove(Running);
+        if(Running.tResp == -1)
+          Running.tResp = GlobalTime - Running.tLle;
+
+        mW.tblReady.Rows.RemoveAt(0);
       } else {
         Running = new Process();
-        //mW.UpdateLabels(Running);
       }
     }
 
     public void Interrupt()
     {
       Running.State = States.Blocked;
+
       Blocked.Enqueue(Running);
+      memory.ChangeFramesState(Running, States.Blocked); // <<
     }
 
     public void Deinterrupt()
     {
       var p = Blocked.Dequeue();
       p.State = States.Ready;
+
       Ready.Enqueue(p);
+      memory.ChangeFramesState(p, States.Ready); // <<
     }
 
     public void Terminate()
     {
       if(wasInterru == false && Running.tTra < Running.TME) {
-        //mW.tblReady.Items.Add(Running);
         Ready.Enqueue(Running);
+        memory.ChangeFramesState(Running, States.Ready); // <<
+
+        mW.tblReady.Rows.Add(Running.Id, Running.TME, Running.tRest);
       } else {
         Running.tFin = GlobalTime;
         Running.tRet = Running.tEsp + Running.tTra;
         Running.State = States.Terminated;
         Exit.Enqueue(Running);
+
+        memory.FreeFrames += Running.TotalPages;
+        memory.ChangeFramesState(Running, States.New); // <<
+
         // --------- WINDOW ----------- //
-        //mW.tblTerminated.Items.Add(Running);
+        mW.tblTerminated.Rows.Add(Running.Id, Running.Ope.ToString(), Running.Ope.Result);
       }
     }
 
     private async Task ExecuteRunning()
     {
       if(Running.State == States.Running) {
-        int elapsed = 0;
-        while(elapsed++ < quantum && Running.tTra++ < Running.TME) {
+        qCount = 0;
+        while(qCount++ < quantum && Running.tTra++ < Running.TME) {
           Running.tRest = Running.TME - Running.tTra;
           IncreaseTime();
 
-          //mW.UpdateLabels(Running);
-          //mW.UpdateTable(Blocked, mW.tblBlocked);
+          mW.UpdateLabels(Running);
+          mW.UpdateTable(Blocked, mW.tblBlocked);
 
           await Task.Delay(1000).ConfigureAwait(true);
           await WasKeyPressed().ConfigureAwait(true);
@@ -144,7 +165,7 @@ namespace Act14_Paginacion
         await Task.Delay(1000).ConfigureAwait(true);
         await WasKeyPressed().ConfigureAwait(true);
 
-        //mW.UpdateTable(Blocked, mW.tblBlocked);
+        mW.UpdateTable(Blocked, mW.tblBlocked);
       }
     }
 
@@ -165,8 +186,9 @@ namespace Act14_Paginacion
         }
       }
       if(DeInterrupt) {
-        //mW.tblBlocked.Items.Remove(Blocked.Peek());
-        //mW.tblReady.Items.Add(Blocked.Peek());
+        var topBlo = Blocked.Peek();
+        mW.tblBlocked.Rows.RemoveAt(0);
+        mW.tblReady.Rows.Add(topBlo.Id, topBlo.TME, topBlo.tRest);
         Deinterrupt();
       }
     }
@@ -177,44 +199,43 @@ namespace Act14_Paginacion
       this.quantum = quantum;
 
       for(int id = 1; id <= totalProcesses; id++) {
-        CreateProcess(id);
+        New.Enqueue(CreateProcess(id));
       }
     }
 
-    private void CreateProcess(int Id)
+    private Process CreateProcess(int Id)
     {
       int TME = r.Next(8, 18);
       int num1 = r.Next(0, 100);
       int opeIdx = r.Next(0, 5);
       int num2 = r.Next(0, 100);
       int size = r.Next(6, 35);
-
-      if(opeIdx == 3 || opeIdx == 4) { num2++; }
+      if(opeIdx == 3 || opeIdx == 4) num2++;
       var Ope = new Operation(num1, opeIdx, num2);
-      New.Enqueue(new Process(Id, TME, Ope, size, States.New));
+      return new Process(Id, TME, Ope, size, States.New);
     }
 
     private async Task WasKeyPressed()
     {
       switch(mW.KeyPressed) {
-        case "I":
+        case "i":
           wasBlocked = true;
           Interrupt();
           break;
-        case "E":
+        case "e":
           Running.Result = "ERROR";
           wasInterru = true;
           break;
-        case "P":
+        case "p":
           while(mW.KeyPressed != "C") {
             await Task.Delay(1000).ConfigureAwait(true);
           }
           break;
-        case "B":
+        case "b":
           //var myBCP = new BCP(this);
           //myBCP.ShowDialog();
           break;
-        case "N":
+        case "n":
           CreateProcess(++totalProcesses);
           Admit();
           break;

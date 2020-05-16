@@ -1,7 +1,7 @@
 ﻿
 namespace Act14_Paginacion
 {
-  class Frame
+  public class Frame
   {
     public int Id { get; set; }
     public int ProcessId { get; set; }

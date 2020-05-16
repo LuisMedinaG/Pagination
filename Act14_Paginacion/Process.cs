@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Act14_Paginacion
 {
-  class Process : IEquatable<Process>
+  public class Process : IEquatable<Process>
   {
     public int Id { get; set; }
     public int TME { get; set; }
@@ -29,6 +29,8 @@ namespace Act14_Paginacion
     {
       State = States.New;
       Frames = new List<Frame>();
+      Ope = new Operation();
+      tResp = -1;
     }
 
     public Process(int Id, int TME, Operation Ope, double Size, States State)
@@ -43,6 +45,7 @@ namespace Act14_Paginacion
       Frames = new List<Frame>();
       
       tRest = TME;
+      tResp = -1;
     }
 
     public bool Equals(Process other)

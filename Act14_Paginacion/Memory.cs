@@ -2,7 +2,7 @@
 
 namespace Act14_Paginacion
 {
-  class Memory
+  public class Memory
   {
     public const int FRAME_SIZE = 4;
     public const int MEMORY_SIZE = 180;
@@ -22,38 +22,36 @@ namespace Act14_Paginacion
 
       /* Ocupy frames for the Operating system*/
       Process OS = new Process {
-        Size = 9.0
+        Id = -1,
+        TotalPages = 3
       };
-      InsertProcess(OS);
+      InsertProcess(OS, States.Terminated);
     }
 
-    public bool InsertProcess(Process p)
+    public void InsertProcess(Process p, States state)
     {
-      if(p.TotalPages > FreeFrames || FreeFrames == 0) return false;
-
       int totalPages = p.TotalPages;
       foreach(Frame f in Frames) {
         if(totalPages == 0) break;
         if(f.State == States.New) {
           f.ProcessId = p.Id;
-          f.State = States.Ready;
+          f.State = state;
           p.Frames.Add(f);
           totalPages--;
         }
       }
-
-      return true;
+      FreeFrames -= p.TotalPages;
     }
 
     public void ChangeFramesState(Process p, States State)
     {
       foreach(Frame pFrame in p.Frames) {
-        Frame mFrame = Frames[pFrame.Id];
+        Frame mFrame = Frames[pFrame.Id - 1];
         // Update frame state
         mFrame.State = State;
-        if(State == States.Terminated) {
+        if(p.State == States.Terminated) {
           // If state is Terminated restore process Id of frame
-          mFrame.ProcessId = -1;
+          mFrame.ProcessId = 0;
         }
       }
     }
