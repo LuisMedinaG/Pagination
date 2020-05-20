@@ -73,7 +73,7 @@ namespace Act14_Paginacion
 
     public void Admit()
     {
-      while(New.Count > 0 && memory.FreeFrames > 0 && New.Peek().TotalPages < memory.FreeFrames) {
+      while(New.Count > 0 && memory.FreeFrames > 0 && New.Peek().TotalPages <= memory.FreeFrames) {
         Process p = New.Dequeue();
 
         p.tEsp = 0;
@@ -84,7 +84,7 @@ namespace Act14_Paginacion
         Ready.Enqueue(p);
         memory.InsertProcess(p, States.Ready);
 
-        mW.tblReady.Rows.Add(p.Id, p.TME, p.tRest);
+        mW.tblReady.Rows.Add(p.Id, p.TME, p.tRst);
       }
     }
 
@@ -96,8 +96,8 @@ namespace Act14_Paginacion
 
         memory.ChangeFramesState(Running, States.Running); // <<
 
-        if(Running.tResp == -1)
-          Running.tResp = GlobalTime - Running.tLle;
+        if(Running.tRsp == -1)
+          Running.tRsp = GlobalTime - Running.tLle;
 
         mW.tblReady.Rows.RemoveAt(0);
       } else {
@@ -128,7 +128,7 @@ namespace Act14_Paginacion
         Ready.Enqueue(Running);
         memory.ChangeFramesState(Running, States.Ready); // <<
 
-        mW.tblReady.Rows.Add(Running.Id, Running.TME, Running.tRest);
+        mW.tblReady.Rows.Add(Running.Id, Running.TME, Running.tRst);
       } else {
         Running.tFin = GlobalTime;
         Running.tRet = Running.tEsp + Running.tTra;
@@ -148,7 +148,7 @@ namespace Act14_Paginacion
       if(Running.State == States.Running) {
         qCount = 0;
         while(qCount++ < quantum && Running.tTra++ < Running.TME) {
-          Running.tRest = Running.TME - Running.tTra;
+          Running.tRst = Running.TME - Running.tTra;
           IncreaseTime();
 
           mW.UpdateLabels(Running);
@@ -179,16 +179,17 @@ namespace Act14_Paginacion
       bool DeInterrupt = false;
       foreach(Process p in Blocked) {
         p.tEsp++;
-        p.tBloRes = 8 - p.tBlo++;
+        p.tBlR = 8 - p.tBlo++;
         if(p.tBlo >= 8) {
           DeInterrupt = true;
           p.tBlo = 0;
         }
       }
+
       if(DeInterrupt) {
         var topBlo = Blocked.Peek();
         mW.tblBlocked.Rows.RemoveAt(0);
-        mW.tblReady.Rows.Add(topBlo.Id, topBlo.TME, topBlo.tRest);
+        mW.tblReady.Rows.Add(topBlo.Id, topBlo.TME, topBlo.tRst);
         Deinterrupt();
       }
     }
@@ -218,26 +219,29 @@ namespace Act14_Paginacion
     private async Task WasKeyPressed()
     {
       switch(mW.KeyPressed) {
-        case "i":
+        case "I":
           wasBlocked = true;
           Interrupt();
           break;
-        case "e":
-          Running.Result = "ERROR";
+        case "E":
+          Running.Ope.Result = "ERROR";
           wasInterru = true;
           break;
-        case "p":
+        case "P":
           while(mW.KeyPressed != "C") {
             await Task.Delay(1000).ConfigureAwait(true);
           }
           break;
-        case "b":
-          //var myBCP = new BCP(this);
-          //myBCP.ShowDialog();
+        case "B":
+          var myBCP = new BCP(this);
+          myBCP.ShowDialog();
           break;
-        case "n":
-          CreateProcess(++totalProcesses);
+        case "N":
+          New.Enqueue(CreateProcess(++totalProcesses));
           Admit();
+          mW.UpdateMemory(this);
+          break;
+        default:
           break;
       }
       mW.KeyPressed = "";

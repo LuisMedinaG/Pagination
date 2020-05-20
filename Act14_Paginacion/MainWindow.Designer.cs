@@ -41,9 +41,6 @@
       this.TT = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Blocked = new System.Windows.Forms.GroupBox();
       this.tblBlocked = new System.Windows.Forms.DataGridView();
-      this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
       this.tblTerminated = new System.Windows.Forms.DataGridView();
       this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -75,6 +72,9 @@
       this.label12 = new System.Windows.Forms.Label();
       this.lblNumPro = new System.Windows.Forms.Label();
       this.label10 = new System.Windows.Forms.Label();
+      this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.txtBoxQuantum)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.txtBoxTotalProc)).BeginInit();
       this.groupBox1.SuspendLayout();
@@ -255,30 +255,6 @@
       this.tblBlocked.RowHeadersVisible = false;
       this.tblBlocked.Size = new System.Drawing.Size(155, 131);
       this.tblBlocked.TabIndex = 0;
-      // 
-      // dataGridViewTextBoxColumn4
-      // 
-      this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-      this.dataGridViewTextBoxColumn4.HeaderText = "Id";
-      this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-      this.dataGridViewTextBoxColumn4.ReadOnly = true;
-      this.dataGridViewTextBoxColumn4.Width = 41;
-      // 
-      // dataGridViewTextBoxColumn5
-      // 
-      this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-      this.dataGridViewTextBoxColumn5.HeaderText = "TME";
-      this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-      this.dataGridViewTextBoxColumn5.ReadOnly = true;
-      this.dataGridViewTextBoxColumn5.Width = 55;
-      // 
-      // dataGridViewTextBoxColumn6
-      // 
-      this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-      this.dataGridViewTextBoxColumn6.HeaderText = "TT";
-      this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-      this.dataGridViewTextBoxColumn6.ReadOnly = true;
-      this.dataGridViewTextBoxColumn6.Width = 46;
       // 
       // groupBox5
       // 
@@ -610,6 +586,30 @@
       this.label10.Text = "Id:";
       this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
+      // dataGridViewTextBoxColumn4
+      // 
+      this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+      this.dataGridViewTextBoxColumn4.HeaderText = "Id";
+      this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+      this.dataGridViewTextBoxColumn4.ReadOnly = true;
+      this.dataGridViewTextBoxColumn4.Width = 41;
+      // 
+      // dataGridViewTextBoxColumn5
+      // 
+      this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+      this.dataGridViewTextBoxColumn5.HeaderText = "TME";
+      this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+      this.dataGridViewTextBoxColumn5.ReadOnly = true;
+      this.dataGridViewTextBoxColumn5.Width = 55;
+      // 
+      // dataGridViewTextBoxColumn6
+      // 
+      this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+      this.dataGridViewTextBoxColumn6.HeaderText = "TRB";
+      this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+      this.dataGridViewTextBoxColumn6.ReadOnly = true;
+      this.dataGridViewTextBoxColumn6.Width = 54;
+      // 
       // MainWindow
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -622,6 +622,7 @@
       this.Controls.Add(this.Blocked);
       this.Controls.Add(this.Ready);
       this.Controls.Add(this.groupBox1);
+      this.KeyPreview = true;
       this.Name = "MainWindow";
       this.Text = "Form1";
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TeclaPresionada);
@@ -657,9 +658,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn TME;
         private System.Windows.Forms.DataGridViewTextBoxColumn TT;
         private System.Windows.Forms.GroupBox Blocked;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.GroupBox groupBox7;
@@ -694,6 +692,9 @@
     private System.Windows.Forms.Label lblNextPro;
     private System.Windows.Forms.Label lblQuantum;
     private System.Windows.Forms.Label label6;
-  }
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+    }
 }
 

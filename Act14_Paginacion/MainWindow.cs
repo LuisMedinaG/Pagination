@@ -41,10 +41,10 @@ namespace Act14_Paginacion
       lblTME_PE.Text = p.TME.ToString();
       lblOpe_PE.Text = p.Ope.ToString();
       lblTieTra.Text = p.tTra.ToString();
-      lblTieRes.Text = p.tRest.ToString();
+      lblTieRes.Text = p.tRst.ToString();
 
       var qNew = schedule.New;
-      lblProRes.Text = qNew.Count.ToString();
+      lblProRes.Text = qNew.Count.ToString() + ", ";
       if(schedule.New.Count > 0) {
         var newTop = qNew.Peek();
         lblNextPro.Text = newTop.Id.ToString() + " " + newTop.TotalPages.ToString();
@@ -62,7 +62,7 @@ namespace Act14_Paginacion
         if(p.State == States.Ready) {
           table.Rows.Add(p.Id, p.TME, p.tTra);
         } else if(p.State == States.Blocked) {
-          table.Rows.Add(p.Id, p.TME, p.tBloRes);
+          table.Rows.Add(p.Id, p.TME, p.tBlR);
         } else if(p.State == States.Terminated) {
           table.Rows.Add(p.Id, p.Ope.ToString(), p.Ope.Result);
         }
@@ -111,13 +111,13 @@ namespace Act14_Paginacion
           c = Color.White;
           break;
         case States.Ready:
-          c = Color.Orange;
+          c = Color.LightBlue;
           break;
         case States.Running:
           c = Color.Red;
           break;
         case States.Blocked:
-          c = Color.LightGoldenrodYellow;
+          c = Color.Purple;
           break;
         case States.Terminated:
           c = Color.Gray;
@@ -130,7 +130,7 @@ namespace Act14_Paginacion
 
     private void TeclaPresionada(object sender, KeyEventArgs e)
     {
-      KeyPressed = e.KeyCode.ToString();
+      KeyPressed = e.KeyData.ToString();
     }
   }
 }
